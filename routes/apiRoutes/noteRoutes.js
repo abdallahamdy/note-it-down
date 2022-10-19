@@ -1,6 +1,8 @@
 const router = require('express').Router();
+const fs = require("fs");
+const path = require("path");
 
-const { notes } = require('../../db/db');
+const notes = require('../../db/db.json');
 
 router.get('/notes', (req, res) => {
   let results = notes;
@@ -8,9 +10,14 @@ router.get('/notes', (req, res) => {
 });
 
 router.post('/notes', (req, res) => {
-  // set id based on what the next index of the array will be
-  console.log(req.body)
-  req.body.id = notes.length.toString();
+  req.body.id = notes.length + 1
+
+  notes.push(req.body)
+
+  fs.writeFileSync(
+    path.join(__dirname, '../../db/db.json'),
+    JSON.stringify(notes, null, 2)
+  );
 });
 
 module.exports  = router;
